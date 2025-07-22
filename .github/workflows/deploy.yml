@@ -1,14 +1,15 @@
-name: Deploy to GCP
+name: GCP Deploy via WIF
 
 on:
   push:
-    branches:
-      - main
     paths:
       - '**'
+    branches:
+      - main           # Trigger only on main branch (adjust if needed)
 
 jobs:
   deploy:
+    name: Deploy to GCP
     runs-on: ubuntu-latest
 
     permissions:
@@ -22,12 +23,12 @@ jobs:
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
-          credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+          token_format: 'access_token'
+          workload_identity_provider: 'projects/57920515119/locations/global/workloadIdentityPools/github-actions-pool/providers/github'
+          service_account: 'github-actions-sa@sylvan-hydra-464904-d9.iam.gserviceaccount.com'
 
-      - name: Set up gcloud CLI
-        uses: google-github-actions/setup-gcloud@v2
-
-      - name: Deploy App or Run gcloud
+      # Example: Deploy or run GCP command
+      - name: Run gcloud command
         run: |
           gcloud info
-          # Your deploy or build commands here
+          gcloud config list
